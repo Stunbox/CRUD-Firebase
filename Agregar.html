@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Agregar Jugador</title>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <!--<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js"></script> -->
+</head>
+
+<body>
+  <h1 id="holaMundo"></h1>
+  <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase-database.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <form action="" method="post">
+    <input id="Name" class="input" type="text" value="" placeholder="Name" required /><br />
+    <input id="Lvl" class="input" type="number" value="" placeholder="Lvl" required /><br />
+    <input id="Money" class="input" type="number" value="" maxlength="10" placeholder="Money" required /><br />
+    <button id="submit_button" type="button" onclick="agregar()">Agregar</button>
+  </form>
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyBZ6z7-QyO4ljHsEJsQr8QXdImPU-vDAG0",
+      authDomain: "game-stats-testing.firebaseapp.com",
+      databaseURL: "https://game-stats-testing.firebaseio.com/",
+      projectId: "game-stats-testing",
+      storageBucket: "game-stats-testing.appspot.com",
+      messagingSenderId: "254901759107",
+      appId: "1:254901759107:web:e4d701dbf5f7529fa17fb6"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Se conecta con la base de datos de Firebase
+    var dataDB = firebase.database().ref('Players');
+
+    //var userId = window.name;
+
+    var Name, Lvl, Money;
+    var Player = {};
+
+    // Buscamos el artículo.
+    /*dataDB.child(userId).once('value', function (datos) {
+      Player = datos.val();
+
+      Name = Player.Name;
+      Lvl = Player.Lvl;
+      Money = Player.Money;
+
+      $('#Name').val(Name);
+      $('#Lvl').val(Lvl);
+      $('#Money').val(Money);
+    });*/
+
+    function agregar() {
+      //agarramos los datos de los text boxes
+      var Name = document.getElementById('Name');
+      var Lvl = document.getElementById('Lvl');
+      var Money = document.getElementById('Money');
+
+      
+      //Generamos id y pusheamos los datos
+      dataDB.push({
+        Name: Name.value,
+        Lvl: Lvl.value,
+        Money: Money.value
+      });
+      alert('Usuario agregado');
+      location.assign('users.html');
+    }
+
+  </script>
+</body>
+
+</html>

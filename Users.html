@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Lista de usuarios</title>
+</head>
+
+<body>
+    <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase-database.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        //Config database
+        var firebaseConfig = {
+            apiKey: "AIzaSyBZ6z7-QyO4ljHsEJsQr8QXdImPU-vDAG0",
+            authDomain: "game-stats-testing.firebaseapp.com",
+            databaseURL: "https://game-stats-testing.firebaseio.com/",
+            projectId: "game-stats-testing",
+            storageBucket: "game-stats-testing.appspot.com",
+            messagingSenderId: "254901759107",
+            appId: "1:254901759107:web:e4d701dbf5f7529fa17fb6"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        var refDB = firebase.database().ref().child('Players');
+        var usuarios = {};
+        ver();
+
+        function ver() {
+            refDB.on('value', function (datos) {
+
+                usuarios = datos.val();
+                // Recorremos los productos y los mostramos
+                $.each(usuarios, function (indice, valor) {
+                    var tBody = document.getElementById('dataTable').lastElementChild;
+                    var tr1 = document.createElement('tr');
+                    tBody.appendChild(tr1);
+                    //var prevProducto = '<td>' + indice + '</td>';
+                    var prevProducto = '<td>' + valor.Name + '</td>';
+                    prevProducto += '<td>' + valor.Lvl + '</td>';
+                    prevProducto += '<td>' + valor.Money + '</td>';
+                    prevProducto += '<td><button type="button" class="btn btn-warning" onclick="editar(\'' + indice + '\')">Editar</button></td>';
+                    prevProducto += '<td><button type="button" class="btn btn-danger" onclick="borrar(\'' + indice + '\')">Borrar</button></td>';
+
+                    $(prevProducto).appendTo(tr1);
+                });
+            }, function (objetoError) {
+                console.log('Error de lectura:' + objetoError.code);
+            });
+        }
+
+        function editar(id) {
+            // Para pasar el ID a otro proceso lo hacemos a través de window.name
+            window.name = id;
+
+            // Cargamos la página editarproducto.html
+            location.assign('editar.html');
+        }
+        function borrar(id) {
+            refDB.child(id).remove();
+            location.reload();
+        }
+        function agregar() {
+            location.assign('agregar.html');
+        }
+        function buscar() {
+            var Player = document.getElementById("userName").value;
+            if (Player != "") {
+                refDB.orderByChild('Name').equalTo(Player).limitToFirst(5).on('value', function (datos) {
+                    $("tbody").children().remove()
+                    usuarios = datos.val();
+                    $.each(usuarios, function (indice, valor) {
+                        var tBody = document.getElementById('dataTable').lastElementChild;
+                        var tr1 = document.createElement('tr');
+                        tBody.appendChild(tr1);
+                        //var prevProducto = '<td>' + indice + '</td>';
+                        var prevProducto = '<td>' + valor.Name + '</td>';
+                        prevProducto += '<td>' + valor.Lvl + '</td>';
+                        prevProducto += '<td>' + valor.Money + '</td>';
+                        prevProducto += '<td><button type="button" class="btn btn-warning" onclick="editar(\'' + indice + '\')">Editar</button></td>';
+                        prevProducto += '<td><button type="button" class="btn btn-danger" onclick="borrar(\'' + indice + '\')">Borrar</button></td>';
+                        //prevProducto += '<td><button type="button" class="btn btn-danger" onclick="agregar()">Agregar</button></td>';
+                        $(prevProducto).appendTo(tr1)
+                    });
+
+                }, function (objetoError) {
+                    console.log('Error de lectura:' + objetoError.code);
+                });
+            }else{
+                location.reload();
+            }
+        }
+
+    </script>
+    <div class="container-fluid" id="listado">
+        <h1>Listado de Jugadores</h1>
+        <input type="text" id="userName" name="Usuario">
+        <button type="button" class="btn btn-danger" onclick="buscar()">Buscar</button>
+        <button type="button" class="btn btn-danger" onclick="agregar()">Agregar</button>
+        <table id="dataTable" border="1px" border-color="#000" width="800px">
+            <thead>
+                <th>Name</th>
+                <th>Lvl</th>
+                <th>Money</th>
+                <th colspan="3">Acciones</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</body>
+
+</html>
